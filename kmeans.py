@@ -13,7 +13,7 @@ class KMeans:
 	# List All Cluster Membership
 	cluster_membership = []
 
-	#WIEGA
+	# Labels
 	label_clustered = []
 
 
