@@ -1,4 +1,6 @@
 import numpy
+from sklearn.preprocessing import normalize
+
 
 # Input must be tuple of integer / float
 def countDistance(centroid, instance):
@@ -19,3 +21,38 @@ def create_list_dataset(filename):
 			list_output.append(list_temp)
 	list_output = list_output
 	return list_output
+
+def normalize_attr(list_dataset):
+	print("NORMALIZING... \nPLEASE WAIT...")
+	array_to_normalize = numpy.array(list_dataset)
+	array_to_normalize = normalize(array_to_normalize)
+	list_intance = []
+	for instance in array_to_normalize:
+		list_attr = []
+		for attr in instance:
+			list_attr.append(attr)
+		list_intance.append(list_attr)
+	return list_intance
+
+def create_list_label(filename):
+	file = open(filename, 'r')
+	list_dataset = []
+	for line in file:
+		if len(line) > 2:
+			list_dataset.append(line.split(","))
+	# Asumption label value located at last element of list
+	
+	# Create Map
+	b = 0
+	dict_label = {}
+	for instance in list_dataset:
+		if str(instance[-1]) not in dict_label:
+			dict_label[str(instance[-1])] = b
+			b += 1
+
+	# Create list label
+	list_label = []
+	for instance in list_dataset:
+		list_label.append(dict_label[str(instance[-1])])
+
+	return list_label

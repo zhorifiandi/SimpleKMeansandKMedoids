@@ -13,15 +13,23 @@ class KMeans:
 	# List All Cluster Membership
 	cluster_membership = []
 
+	#WIEGA
+	label_clustered = []
+
 
 	def __init__(self, n_clusters):
 		self.n_clusters = n_clusters
 
-	def train(self,input_data):
+	def train(self,input_data,normalize="none"):
+		# Normalization (optional)
+		if normalize=="normalize":
+			input_data = utils.normalize_attr(input_data)
+
 		# Insert input datasets
 		temp_input_data = []
 		for data in input_data:
 			temp_input_data.append(data)
+		print(temp_input_data[0])
 
 		# Initialize list of clusters
 		list_of_clusters = []	
@@ -94,8 +102,6 @@ class KMeans:
 				# print(self.cluster_membership)
 
 				self.cluster_membership = list_of_clusters
-
-
 			
 			print("Result: ")
 			print(self.centroids)
@@ -105,6 +111,21 @@ class KMeans:
 			# print(self.cluster_membership)
 			# print()
 			iteration += 1
+
+		#WIEGA
+		# Converged, create map
+		dict = {}
+		idx_cluster = 0
+		for cluster in self.cluster_membership:
+			for instance in cluster:
+				dict[str(instance)] = idx_cluster
+			idx_cluster +=1
+
+		# create label
+		for instance in input_data:
+			self.label_clustered.append(dict[str(instance)])
+
+
 
 	def predict(self, instance):
 		distances_to_cluster = []
