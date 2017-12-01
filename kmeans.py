@@ -37,10 +37,11 @@ class KMeans:
 			list_of_clusters.append([])
 
 		# Choose random centroids for initialization
+		current_centroids = []
 		for i in range(0,self.n_clusters):
 			elmt = rand.choice(temp_input_data)
 			temp_input_data.remove(elmt)
-			self.centroids.append(elmt)
+			current_centroids.append(elmt)
 			list_of_clusters[i].append(elmt)
 
 		# print("init")
@@ -64,7 +65,7 @@ class KMeans:
 			for instance in input_data:
 				# Count distance of instance to cluster
 				distances_to_cluster = []
-				for ctr in self.centroids:
+				for ctr in current_centroids:
 					distances_to_cluster.append(utils.countDistance(ctr,instance))
 
 				# Assign the instance to "nearest" centroid cluster
@@ -75,9 +76,9 @@ class KMeans:
 			for i,cluster in enumerate(list_of_clusters):
 				distances = []
 				for data in cluster:
-					distances.append(utils.countDistance(self.centroids[i],data))
+					distances.append(utils.countDistance(current_centroids[i],data))
 
-				self.centroids[i] = tuple(map(lambda y: sum(y) / float(len(y)), zip(*cluster)))
+				current_centroids[i] = tuple(map(lambda y: sum(y) / float(len(y)), zip(*cluster)))
 
 			# Check for any instance change
 			# print("Check for any instance change")
@@ -104,14 +105,21 @@ class KMeans:
 				self.cluster_membership = list_of_clusters
 			
 			print("Result: ")
-			print(self.centroids)
+			print(current_centroids)
 
 			for i,cluster in enumerate(self.cluster_membership):
 				print("Total Member of Cluster",i," :",len(cluster))
-			# print(self.cluster_membership)
-			# print()
 			iteration += 1
 
+		self.centroids = current_centroids
+		print("\n\nEnd Of Epoch")
+		print("Result: ")
+		print(self.centroids)
+
+		for i,cluster in enumerate(self.cluster_membership):
+			print("Total Member of Cluster",i," :",len(cluster))
+		iteration += 1
+		
 		#WIEGA
 		# Converged, create map
 		dict = {}
@@ -124,8 +132,6 @@ class KMeans:
 		# create label
 		for instance in input_data:
 			self.label_clustered.append(dict[str(instance)])
-
-
 
 	def predict(self, instance):
 		distances_to_cluster = []
