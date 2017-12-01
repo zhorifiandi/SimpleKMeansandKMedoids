@@ -1,21 +1,14 @@
 import random
-"""
-    dataset: [[1,2],[3,4],[2,3],[5,8],[9,1],[7,4]]
-    medoids: [1,3]
-    distances: [[4,10],[0,6],[2,7],[10,0],[9,11],[8,6]]
-    classes: [0,0,0,1,0,1]
-    medoiddistance: [[4,0,2,9],[0,6]]
-"""
+
 class KMedoids:
-    k = 20
     dataset = []
     medoids = []       # dataset element index where element is a cluster centroid
     distances = []
     classes = []
     medoidDistances = []
-    errors = 0
+    errors = -1
 
-    def __init__(self, dataset_file, k):
+    def __init__(self, dataset_file, k=20):
         self.k = k
         with open(dataset_file, 'rb') as f:
             datasets = f.readlines()
@@ -26,21 +19,24 @@ class KMedoids:
                     appended.append(int(d))
                 self.dataset.append(appended)
             f.close
-        self.medoids = random.sample(range(1, len(self.dataset) - 1), self.k)
+        self.medoids = random.sample(range(0, len(self.dataset)), self.k)
         print "Medoids: " , self.medoids
         self.classes = [idx for idx, data in enumerate(self.dataset)]
         self.distances = [[0] * len(self.medoids) for i in range(len(self.dataset))]
         self.medoidDistances = [[] for i in range(len(self.medoids))]
         print "MD: " , self.medoidDistances
 
-    def setMedoids(self, old, new):
-        self.Medoids[old] = new
+    def setMedoids(self, old):
+        new = random.randint(0, len(self.dataset)-1)
+        while new in self.medoids:
+            new = random.randint(0, len(self.dataset)-1)
+        self.medoids[old] = new
 
     def getMostErrorMedoids(self):
         errors = []
         for distance in self.medoidDistances:
             errors.append(sum(distance))
-        print errors.index(max(errors))
+        print "Medoid to be changed: ", errors.index(max(errors))
         return errors.index(max(errors))
 
     def setErrors(self):
@@ -61,7 +57,6 @@ class KMedoids:
         distance = []
         for i, data in enumerate(self.distances):
             data[idxMedoid] = self.getAbsoluteDistance(self.dataset[i], self.medoids[idxMedoid])
-        print "Distances: " , self.distances
 
     def setMedoidDistances(self):
         for idxmed, medoid in enumerate(self.medoids):
@@ -79,13 +74,59 @@ class KMedoids:
             self.classes[idx] = dataclass
         print "Class: " , self.classes
 
-    def kMedoids(self):
+    def getClusterMembers(self):
+        clusterMembers = []
+        for idxmed, medoid in enumerate(self.medoids):
+            members = []
+            for i, data in enumerate(self.classes):
+                if data == idxmed:
+                    members.append(i)
+            clusterMembers.append(members)
+        return clusterMembers
 
+
+    def traindata(self, maxiter=1000):
+        error = self.errors
+        print "INIT ERROR ", error
+        for i in range(0, self.k):
+            self.setDistance(i)
+        print "Distance: ", self.distances
+        self.setClasses()
+        self.setMedoidDistances()
+        self.setErrors()
+        tempMedoids = self.medoids
+        tempClasses = self.classes
+        iter = 1
+        while (error != self.errors and iter < maxiter):
+            if ( self.errors <= error or error < 0):
+                error = self.errors
+                tempMedoids = self.medoids
+                tempClasses = self.classes
+            changedMedoid = self.getMostErrorMedoids()
+            self.setMedoids(changedMedoid)
+            print "Medoids ", self.medoids
+            self.setDistance(changedMedoid)
+            print "Distance: ", self.distances
+            self.setClasses()
+            self.setMedoidDistances()
+            self.setErrors()
+            print "Old error ", error
+            iter += 1
+
+        if (error < self.errors):
+            self.medoids = tempMedoids
+            self.classes = tempClasses
+
+        final = self.getClusterMembers()
+        for i, elm in enumerate(final):
+            print "Cluster " , i, " with medoid DATA ", self.medoids[i]
+            print elm
 
 if __name__ == "__main__":
     k = 3
-    # filename = "dataset_file"
-    # newKMedoid = KMedoids(filename, k)
+    filename = "dataset-file"
+    newKMedoid = KMedoids(filename, k)
+    newKMedoid.traindata(200)
     # for i in range(0,k):
     #     newKMedoid.setDistance(i)
     # newKMedoid.setClasses()
