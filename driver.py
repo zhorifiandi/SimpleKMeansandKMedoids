@@ -1,6 +1,7 @@
 from kmeans import KMeans
 import utils
 import pickle
+import json
 
 data = [
 		(2,10,10)
@@ -22,7 +23,13 @@ classifier = KMeans(n_clusters= 3)
 classifier.train(input_data=dataset)
 
 print("Model:")
+print(classifier.cluster_membership)
 print(classifier.centroids)
-pickle.dump(classifier, file=open("kmeans_model.cil","wb"))
+pickle.dump(classifier, file=open("kmeans_model.ler","wb"))
 
+# import pdb
+# pdb.set_trace()
 
+# output = json.dumps(classifier.__dict__)
+
+# print(output, file=open("model.json","w"))
