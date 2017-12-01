@@ -116,7 +116,7 @@ class KMeans:
 
 	def predict(self, instance):
 		distances_to_cluster = []
-		for ctr in current_centroids:
+		for ctr in self.centroids:
 			distances_to_cluster.append(utils.countDistance(ctr,instance))
 
 		# Assign the instance to "nearest" centroid cluster
