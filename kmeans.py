@@ -19,7 +19,9 @@ class KMeans:
 
 	def train(self,input_data):
 		# Insert input datasets
-		temp_input_data = input_data
+		temp_input_data = []
+		for data in input_data:
+			temp_input_data.append(data)
 
 		# Initialize list of clusters
 		list_of_clusters = []	
@@ -33,8 +35,8 @@ class KMeans:
 			self.centroids.append(elmt)
 			list_of_clusters[i].append(elmt)
 
-		print("init")
-		print(list_of_clusters)
+		# print("init")
+		# print(list_of_clusters)
 
 		instance_change = -1
 
@@ -49,6 +51,8 @@ class KMeans:
 					list_of_clusters.append([])
 
 			# Assign each instance to cluster 
+			# print("Assign each instance to cluster ")
+			# print(input_data)
 			for instance in input_data:
 				# Count distance of instance to cluster
 				distances_to_cluster = []
@@ -68,9 +72,9 @@ class KMeans:
 				self.centroids[i] = tuple(map(lambda y: sum(y) / float(len(y)), zip(*cluster)))
 
 			# Check for any instance change
-			print("Check for any instance change")
-			print(list_of_clusters)
-			print(self.cluster_membership)
+			# print("Check for any instance change")
+			# print(list_of_clusters)
+			# print(self.cluster_membership)
 			if instance_change == -1:
 				# If first epoch, skip it
 				self.cluster_membership = list_of_clusters
@@ -85,9 +89,9 @@ class KMeans:
 
 				if (self.cluster_membership != list_of_clusters):
 					instance_change = 1
-				print("Compare")
-				print(list_of_clusters)
-				print(self.cluster_membership)
+				# print("Compare")
+				# print(list_of_clusters)
+				# print(self.cluster_membership)
 
 				self.cluster_membership = list_of_clusters
 
@@ -95,9 +99,21 @@ class KMeans:
 			
 			print("Result: ")
 			print(self.centroids)
-			print(self.cluster_membership)
-			print()
+
+			for i,cluster in enumerate(self.cluster_membership):
+				print("Total Member of Cluster",i," :",len(cluster))
+			# print(self.cluster_membership)
+			# print()
 			iteration += 1
+
+	def predict(self, instance):
+		distances_to_cluster = []
+		for ctr in self.centroids:
+			distances_to_cluster.append(utils.countDistance(ctr,instance))
+
+		# Assign the instance to "nearest" centroid cluster
+		min_index = distances_to_cluster.index(min(distances_to_cluster))
+		return min_index
 
 
 
