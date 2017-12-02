@@ -17,7 +17,7 @@ class KMeans:
 	label_clustered = []
 
 
-	def __init__(self, n_clusters):
+	def __init__(self, n_clusters=5):
 		self.n_clusters = n_clusters
 
 	def train(self,input_data,normalize="none"):
