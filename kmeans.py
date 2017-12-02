@@ -106,7 +106,8 @@ class KMeans:
 		self.centroids = current_centroids
 		print("\n\nEnd Of Epoch")
 		print("Result: ")
-		print(self.centroids)
+		for i, ctd in enumerate(self.centroids):
+			print("Centroid",i,":",ctd)
 
 		for i,cluster in enumerate(self.cluster_membership):
 			print("Total Member of Cluster",i," :",len(cluster))

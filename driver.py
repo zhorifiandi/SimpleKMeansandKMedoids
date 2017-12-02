@@ -12,31 +12,12 @@ from sklearn.metrics import silhouette_score
 from sklearn.metrics import calinski_harabaz_score
 import json
 
-data = [
-		(2,10)
-		,(2,5)
-		,(8,4)
-		,(5,8)
-		,(7,5)
-		,(6,4)
-		,(1,2)
-		,(4,9)
-		]
 
 dataset = utils.create_list_dataset("CencusIncome.data.txt")
 list_label = utils.create_list_label("CencusIncome.data.txt")
-# list_label = [0, 2, 1, 0, 1, 1, 2, 0]
-# for data in dataset:
-# 	print(len(data), data)
-
 classifier = KMeans(n_clusters= 2)
 
 classifier.train(input_data=dataset,normalize="normalize")
-
-print("Model:")
-print(classifier.cluster_membership)
-print(classifier.centroids)
-print(classifier.label_clustered)
 
 # Adjusted Rand Index
 print("------------------------ K-MEANS MODEL --------------------------------")

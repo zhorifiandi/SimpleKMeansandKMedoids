@@ -23,7 +23,7 @@ class KMedoids:
         self.k = k
         self.dataset = dataset
         self.medoids = random.sample(range(0, len(self.dataset)), self.k)
-        print "Medoids: " , self.medoids
+        print("Medoids: " , self.medoids)
         self.classes = [idx for idx, data in enumerate(self.dataset)]
         self.distances = [[0] * len(self.medoids) for i in range(len(self.dataset))]
         self.medoidDistances = [[] for i in range(len(self.medoids))]
