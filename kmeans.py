@@ -36,6 +36,9 @@ class KMeans:
 		for i in range(0,self.n_clusters):
 			list_of_clusters.append([])
 
+		# Initialize label clustered
+		temp_label_clustered = []
+
 		# Choose random centroids for initialization
 		current_centroids = []
 		for i in range(0,self.n_clusters):
@@ -43,9 +46,6 @@ class KMeans:
 			temp_input_data.remove(elmt)
 			current_centroids.append(elmt)
 			list_of_clusters[i].append(elmt)
-
-		# print("init")
-		# print(list_of_clusters)
 
 		instance_change = -1
 
@@ -60,8 +60,6 @@ class KMeans:
 					list_of_clusters.append([])
 
 			# Assign each instance to cluster 
-			# print("Assign each instance to cluster ")
-			# print(input_data)
 			for instance in input_data:
 				# Count distance of instance to cluster
 				distances_to_cluster = []
@@ -81,9 +79,6 @@ class KMeans:
 				current_centroids[i] = tuple(map(lambda y: sum(y) / float(len(y)), zip(*cluster)))
 
 			# Check for any instance change
-			# print("Check for any instance change")
-			# print(list_of_clusters)
-			# print(self.cluster_membership)
 			if instance_change == -1:
 				# If first epoch, skip it
 				self.cluster_membership = list_of_clusters
@@ -98,9 +93,6 @@ class KMeans:
 
 				if (self.cluster_membership != list_of_clusters):
 					instance_change = 1
-				# print("Compare")
-				# print(list_of_clusters)
-				# print(self.cluster_membership)
 
 				self.cluster_membership = list_of_clusters
 			
@@ -120,7 +112,6 @@ class KMeans:
 			print("Total Member of Cluster",i," :",len(cluster))
 		iteration += 1
 		
-		#WIEGA
 		# Converged, create map
 		dict = {}
 		idx_cluster = 0
@@ -129,9 +120,11 @@ class KMeans:
 				dict[str(instance)] = idx_cluster
 			idx_cluster +=1
 
-		# create label
+		# Create label
 		for instance in input_data:
-			self.label_clustered.append(dict[str(instance)])
+			temp_label_clustered.append(dict[str(instance)])
+
+		self.label_clustered = temp_label_clustered
 
 	def predict(self, instance):
 		distances_to_cluster = []

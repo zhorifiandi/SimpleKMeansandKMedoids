@@ -33,6 +33,11 @@ classifier = KMeans(n_clusters= 2)
 
 classifier.train(input_data=dataset,normalize="normalize")
 
+print("Model:")
+print(classifier.cluster_membership)
+print(classifier.centroids)
+print(classifier.label_clustered)
+
 # Adjusted Rand Index
 print("------------------------ K-MEANS MODEL --------------------------------")
 list_clustered = classifier.label_clustered
@@ -48,8 +53,6 @@ print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(np.array(list_label)
 print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(np.array(dataset), np.array(list_label))))
 
 
-# print("Model:")
-# print(classifier.cluster_membership)
-# print(classifier.centroids)
 
-pickle.dump(classifier, file=open("kmeans_model.ler","wb"))
+
+pickle.dump(classifier, file=open("kmeans_model.pkl","wb"))
