@@ -1,4 +1,15 @@
 import random
+import utils
+import pickle
+import numpy as np
+from sklearn.metrics import adjusted_rand_score
+from sklearn.metrics import adjusted_mutual_info_score
+from sklearn.metrics import homogeneity_score
+from sklearn.metrics import completeness_score
+from sklearn.metrics import v_measure_score
+from sklearn.metrics import fowlkes_mallows_score
+from sklearn.metrics import silhouette_score
+from sklearn.metrics import calinski_harabaz_score
 
 class KMedoids:
     dataset = []
@@ -8,23 +19,15 @@ class KMedoids:
     medoidDistances = []
     errors = -1
 
-    def __init__(self, dataset_file, k=20):
+    def __init__(self, dataset, k=20):
         self.k = k
-        with open(dataset_file, 'rb') as f:
-            datasets = f.readlines()
-            for dataset in datasets:
-                data = dataset.split(',')
-                appended = []
-                for d in data:
-                    appended.append(int(d))
-                self.dataset.append(appended)
-            f.close
+        self.dataset = dataset
         self.medoids = random.sample(range(0, len(self.dataset)), self.k)
         print "Medoids: " , self.medoids
         self.classes = [idx for idx, data in enumerate(self.dataset)]
         self.distances = [[0] * len(self.medoids) for i in range(len(self.dataset))]
         self.medoidDistances = [[] for i in range(len(self.medoids))]
-        print "MD: " , self.medoidDistances
+        # print "MD: " , self.medoidDistances
 
     def setMedoids(self, old):
         new = random.randint(0, len(self.dataset)-1)
@@ -36,7 +39,6 @@ class KMedoids:
         errors = []
         for distance in self.medoidDistances:
             errors.append(sum(distance))
-        print "Medoid to be changed: ", errors.index(max(errors))
         return errors.index(max(errors))
 
     def setErrors(self):
@@ -44,7 +46,6 @@ class KMedoids:
         for distance in self.medoidDistances:
             error += sum(distance)
         self.errors = error
-        print "Self error " , self.errors
 
     def getAbsoluteDistance(self, data, medoid):
         medoiddata = self.dataset[medoid]
@@ -65,14 +66,12 @@ class KMedoids:
                 if data == idxmed:
                     distance.append(self.distances[i][data])
             self.medoidDistances[idxmed] = distance
-        print "MD Class: " , self.medoidDistances
 
     def setClasses(self):
         dataclass = 0
         for idx, distance in enumerate(self.distances):
             dataclass = distance.index(min(distance))
             self.classes[idx] = dataclass
-        print "Class: " , self.classes
 
     def getClusterMembers(self):
         clusterMembers = []
@@ -87,49 +86,72 @@ class KMedoids:
 
     def traindata(self, maxiter=1000):
         error = self.errors
-        print "INIT ERROR ", error
+        print ("INIT ERROR ", error)
         for i in range(0, self.k):
             self.setDistance(i)
-        print "Distance: ", self.distances
+        # print ("Distance: ", self.distances)
         self.setClasses()
         self.setMedoidDistances()
         self.setErrors()
         tempMedoids = self.medoids
         tempClasses = self.classes
-        iter = 1
-        while (error != self.errors and iter < maxiter):
-            if ( self.errors <= error or error < 0):
+        it = 1
+        while (error != self.errors and it <= maxiter):
+            print ("EPOCH: ", it)
+            if ( self.errors <= error or error <= 0):
                 error = self.errors
                 tempMedoids = self.medoids
                 tempClasses = self.classes
             changedMedoid = self.getMostErrorMedoids()
+            print ("Changed Medoid: ", changedMedoid)
             self.setMedoids(changedMedoid)
-            print "Medoids ", self.medoids
+            print ("Medoids ", self.medoids)
             self.setDistance(changedMedoid)
-            print "Distance: ", self.distances
+            # print ("Distance: ", self.distances)
             self.setClasses()
             self.setMedoidDistances()
             self.setErrors()
-            print "Old error ", error
-            iter += 1
+            print ("Old error ", error)
+            print ("Current error ", self.errors)
+            it += 1
 
         if (error < self.errors):
             self.medoids = tempMedoids
             self.classes = tempClasses
+            self.errors = error
 
+
+        print ("========================================RESULT========================================")
         final = self.getClusterMembers()
         for i, elm in enumerate(final):
-            print "Cluster " , i, " with medoid DATA ", self.medoids[i]
-            print elm
+            print ("Cluster " , i, " with medoid DATA ", self.medoids[i])
+            print ("NUM ELEMENT: ", len(elm))
+        print ("ERROR: ", self.errors)
 
 if __name__ == "__main__":
-    k = 3
-    filename = "dataset-file"
-    newKMedoid = KMedoids(filename, k)
-    newKMedoid.traindata(200)
-    # for i in range(0,k):
-    #     newKMedoid.setDistance(i)
-    # newKMedoid.setClasses()
-    # newKMedoid.setMedoidDistances()
-    # newKMedoid.setErrors()
-    # newKMedoid.getMostErrorMedoids()
+    dataset = utils.create_list_dataset("CencusIncome.data.txt")
+    dataset_norm = utils.normalize_attr(dataset)
+    print (dataset[:10])
+    print (dataset_norm[:10])
+    list_label = utils.create_list_label("CencusIncome.data.txt")
+    # print (list_label)
+    classifier = KMedoids(dataset_norm, 2)
+    classifier.traindata(100)
+    list_clustered = classifier.classes
+    print("ARI SCORE: " + str(adjusted_rand_score(np.array(list_label), np.array(list_clustered))))
+    print("MUTUAL INFO SCORE: " + str(adjusted_mutual_info_score(np.array(list_label), np.array(list_clustered))))
+    print("HOMOGENEITY SCORE: " + str(homogeneity_score(np.array(list_label), np.array(list_clustered))))
+    print("COMPLETENESS SCORE: " + str(completeness_score(np.array(list_label), np.array(list_clustered))))
+    print("V MEASURE SCORE: " + str(v_measure_score(np.array(list_label), np.array(list_clustered))))
+    # np.seterr(all='warn')
+    # np.multiply.reduce(np.arange(21)+1)
+    print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(np.array(list_label), np.array(list_clustered))))
+    # print("SILHOUETTE SCORE: " + str(silhouette_score(np.array(dataset), np.array(list_label), metric="euclidean")))
+    print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(np.array(dataset), np.array(list_label))))
+
+
+    # print("Model:")
+    # print(classifier.cluster_membership)
+    # print(classifier.centroids)
+
+    pickle.dump(classifier, file=open("kmedoids_model.sti","wb"))
