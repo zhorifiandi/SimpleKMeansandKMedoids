@@ -36,7 +36,7 @@ class KMeans:
 		if normalize=="normalize":
 			input_data = utils.normalize_attr(input_data)
 
-		dataset = input_data
+		self.dataset = input_data
 
 		# Insert input datasets
 		temp_input_data = []
@@ -156,8 +156,8 @@ class KMeans:
 		print("COMPLETENESS SCORE: " + str(completeness_score(numpy.array(label_true), numpy.array(self.label_clustered))))
 		print("V MEASURE SCORE: " + str(v_measure_score(numpy.array(label_true), numpy.array(self.label_clustered))))
 		print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(numpy.array(label_true), numpy.array(self.label_clustered))))
-		# print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(dataset), np.array(label_true), metric="euclidean")))
-		# print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(numpy.array(self.dataset), numpy.array(label_true))))
+		print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(self.dataset), numpy.array(label_true), metric="euclidean")))
+		print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(numpy.array(self.dataset), numpy.array(label_true))))
 
 	def test_validation(self, datatest, label_true):
 		label_clustered_test = []
@@ -172,7 +172,7 @@ class KMeans:
 		print("COMPLETENESS SCORE: " + str(completeness_score(numpy.array(label_true), numpy.array(label_clustered_test))))
 		print("V MEASURE SCORE: " + str(v_measure_score(numpy.array(label_true), numpy.array(label_clustered_test))))
 		print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(numpy.array(label_true), numpy.array(label_clustered_test))))
-		# print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(datatest), np.array(label_true), metric="euclidean")))
+		print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(datatest), numpy.array(label_true), metric="euclidean")))
 		print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(numpy.array(datatest), numpy.array(label_true))))
 
 
