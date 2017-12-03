@@ -29,7 +29,6 @@ class KMeans:
 		temp_input_data = []
 		for data in input_data:
 			temp_input_data.append(data)
-		print(temp_input_data[0])
 
 		# Initialize list of clusters
 		list_of_clusters = []	

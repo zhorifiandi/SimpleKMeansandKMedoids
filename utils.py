@@ -1,5 +1,6 @@
 import numpy
 from sklearn.preprocessing import normalize
+from sklearn.cluster import KMeans
 
 
 # Input must be tuple of integer / float
@@ -38,7 +39,7 @@ def create_list_label(filename):
 	file = open(filename, 'r')
 	list_dataset = []
 	for line in file:
-		if len(line) > 2:
+		if "," in line:
 			list_dataset.append(line.split(","))
 	# Asumption label value located at last element of list
 	
@@ -56,3 +57,11 @@ def create_list_label(filename):
 		list_label.append(dict_label[str(instance[-1])])
 
 	return list_label
+
+def test_using_sklearn(list_dataset,list_datatest):
+	X = numpy.array(list_dataset)
+	kmeans = KMeans(n_clusters=2, random_state=0).fit(X)
+	cluster_train = kmeans.labels_
+	arr_test = numpy.array(list_datatest)
+	cluster_test = kmeans.predict(arr_test)
+	return cluster_train,cluster_test
