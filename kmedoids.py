@@ -152,6 +152,12 @@ class KMedoids:
             print ("NUM ELEMENT: " + str(len(elm)))
         print ("ERROR: "+ str(self.errors))
 
+    def predict(self, instance):
+        distance_to_cluster = []
+        for cluster in self.medoids:
+            distance_to_cluster.append(self.getAbsoluteDistance(instance,cluster))
+        return np.argmin(distance_to_cluster)
+
 if __name__ == "__main__":
     dataset = utils.create_list_dataset("CencusIncome.data.txt")
     dataset_norm = utils.normalize_attr(dataset)
@@ -160,16 +166,32 @@ if __name__ == "__main__":
     classifier = KMedoids(dataset_norm, list_label, 2)
     classifier.traindata(200)
     list_clustered = classifier.classes
+    print("---------------- K-MEDOIDS SCORE USING DATA TRAIN ------------------------")
     print("ARI SCORE: " + str(adjusted_rand_score(np.array(list_label), np.array(list_clustered))))
     print("MUTUAL INFO SCORE: " + str(adjusted_mutual_info_score(np.array(list_label), np.array(list_clustered))))
     print("HOMOGENEITY SCORE: " + str(homogeneity_score(np.array(list_label), np.array(list_clustered))))
     print("COMPLETENESS SCORE: " + str(completeness_score(np.array(list_label), np.array(list_clustered))))
     print("V MEASURE SCORE: " + str(v_measure_score(np.array(list_label), np.array(list_clustered))))
-    # np.seterr(all='warn')
-    # np.multiply.reduce(np.arange(21)+1)
     print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(np.array(list_label), np.array(list_clustered))))
-    print("SILHOUETTE SCORE: " + str(silhouette_score(np.array(dataset_norm), np.array(list_label), metric="euclidean")))
+    # print("SILHOUETTE SCORE: " + str(silhouette_score(np.array(dataset_norm), np.array(list_label), metric="euclidean")))
     print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(np.array(dataset_norm), np.array(list_label))))
+
+
+    datatest = utils.create_list_dataset("CencusIncome.test.txt")
+    datatest_norm = utils.normalize_attr(datatest)
+    list_label_test = utils.create_list_label("CencusIncome.test.txt")
+    list_clustered_test = []
+    for instance in datatest_norm:
+        list_clustered_test.append(classifier.predict(instance))
+    print("---------------- K-MEDOIDS SCORE USING DATA TEST ------------------------")
+    print("ARI SCORE: " + str(adjusted_rand_score(np.array(list_label_test), np.array(list_clustered_test))))
+    print("MUTUAL INFO SCORE: " + str(adjusted_mutual_info_score(np.array(list_label_test), np.array(list_clustered_test))))
+    print("HOMOGENEITY SCORE: " + str(homogeneity_score(np.array(list_label_test), np.array(list_clustered_test))))
+    print("COMPLETENESS SCORE: " + str(completeness_score(np.array(list_label_test), np.array(list_clustered_test))))
+    print("V MEASURE SCORE: " + str(v_measure_score(np.array(list_label_test), np.array(list_clustered_test))))
+    print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(np.array(list_label_test), np.array(list_clustered_test))))
+    # print("SILHOUETTE SCORE: " + str(silhouette_score(np.array(datatest_norm), np.array(list_label_test), metric="euclidean")))
+    print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(np.array(datatest_norm), np.array(list_label_test))))
 
 
     # print("Model:")
