@@ -1,6 +1,14 @@
 import numpy
 from sklearn.preprocessing import normalize
 from sklearn.cluster import KMeans
+from sklearn.metrics import adjusted_rand_score
+from sklearn.metrics import adjusted_mutual_info_score
+from sklearn.metrics import homogeneity_score
+from sklearn.metrics import completeness_score
+from sklearn.metrics import v_measure_score
+from sklearn.metrics import fowlkes_mallows_score
+from sklearn.metrics import silhouette_score
+from sklearn.metrics import calinski_harabaz_score
 
 
 # Input must be tuple of integer / float
@@ -24,7 +32,6 @@ def create_list_dataset(filename):
 	return list_output
 
 def normalize_attr(list_dataset):
-	print("NORMALIZING... \nPLEASE WAIT...")
 	array_to_normalize = numpy.array(list_dataset)
 	array_to_normalize = normalize(array_to_normalize)
 	list_intance = []
@@ -58,10 +65,35 @@ def create_list_label(filename):
 
 	return list_label
 
-def test_using_sklearn(list_dataset,list_datatest):
-	X = numpy.array(list_dataset)
+def test_using_sklearn(label_true,label_true_test,dataset,datatest):
+	X = numpy.array(dataset)
 	kmeans = KMeans(n_clusters=2, random_state=0).fit(X)
 	cluster_train = kmeans.labels_
-	arr_test = numpy.array(list_datatest)
+	arr_test = numpy.array(datatest)
 	cluster_test = kmeans.predict(arr_test)
-	return cluster_train,cluster_test
+	
+
+	# Evaluation for Full Training
+	print("\n------------------------ SCIKIT LEARN --------------------------------")
+	print("--------------- K-MEANS SCORE USING DATA TRAIN -----------------------")
+	print("ARI SCORE: " + str(adjusted_rand_score(numpy.array(label_true), numpy.array(cluster_train))))
+	print("MUTUAL INFO SCORE: " + str(adjusted_mutual_info_score(numpy.array(label_true), numpy.array(cluster_train))))
+	print("HOMOGENEITY SCORE: " + str(homogeneity_score(numpy.array(label_true), numpy.array(cluster_train))))
+	print("COMPLETENESS SCORE: " + str(completeness_score(numpy.array(label_true), numpy.array(cluster_train))))
+	print("V MEASURE SCORE: " + str(v_measure_score(numpy.array(label_true), numpy.array(cluster_train))))
+	print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(numpy.array(label_true), numpy.array(cluster_train))))
+	# print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(dataset), numpy.array(label_true), metric="euclidean")))
+	print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(numpy.array(dataset), numpy.array(label_true))))
+
+	# Evaluation for Split Validation
+	print("--------------- K-MEANS SCORE USING DATA TEST -----------------------")
+	print("ARI SCORE: " + str(adjusted_rand_score(numpy.array(label_true_test), numpy.array(cluster_test))))
+	print("MUTUAL INFO SCORE: " + str(adjusted_mutual_info_score(numpy.array(label_true_test), numpy.array(cluster_test))))
+	print("HOMOGENEITY SCORE: " + str(homogeneity_score(numpy.array(label_true_test), numpy.array(cluster_test))))
+	print("COMPLETENESS SCORE: " + str(completeness_score(numpy.array(label_true_test), numpy.array(cluster_test))))
+	print("V MEASURE SCORE: " + str(v_measure_score(numpy.array(label_true_test), numpy.array(cluster_test))))
+	print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(numpy.array(label_true_test), numpy.array(cluster_test))))
+	# print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(dataset), numpy.array(label_true_test), metric="euclidean")))
+	print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(numpy.array(datatest), numpy.array(label_true_test))))
+
+	return None

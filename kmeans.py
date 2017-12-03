@@ -1,6 +1,14 @@
 import utils
 import random as rand
 import numpy
+from sklearn.metrics import adjusted_rand_score
+from sklearn.metrics import adjusted_mutual_info_score
+from sklearn.metrics import homogeneity_score
+from sklearn.metrics import completeness_score
+from sklearn.metrics import v_measure_score
+from sklearn.metrics import fowlkes_mallows_score
+from sklearn.metrics import silhouette_score
+from sklearn.metrics import calinski_harabaz_score
 
 class KMeans:
 	# Number of Clusters
@@ -16,6 +24,9 @@ class KMeans:
 	# Labels
 	label_clustered = []
 
+	# Dataset 
+	dataset = []
+
 
 	def __init__(self, n_clusters=5):
 		self.n_clusters = n_clusters
@@ -24,6 +35,8 @@ class KMeans:
 		# Normalization (optional)
 		if normalize=="normalize":
 			input_data = utils.normalize_attr(input_data)
+
+		dataset = input_data
 
 		# Insert input datasets
 		temp_input_data = []
@@ -135,8 +148,31 @@ class KMeans:
 		min_index = distances_to_cluster.index(min(distances_to_cluster))
 		return min_index
 
+	def full_validation(self, label_true):
+		print("---------------- K-MEANS SCORE USING DATA TRAIN ------------------------")
+		print("ARI SCORE: " + str(adjusted_rand_score(numpy.array(label_true), numpy.array(self.label_clustered))))
+		print("MUTUAL INFO SCORE: " + str(adjusted_mutual_info_score(numpy.array(label_true), numpy.array(self.label_clustered))))
+		print("HOMOGENEITY SCORE: " + str(homogeneity_score(numpy.array(label_true), numpy.array(self.label_clustered))))
+		print("COMPLETENESS SCORE: " + str(completeness_score(numpy.array(label_true), numpy.array(self.label_clustered))))
+		print("V MEASURE SCORE: " + str(v_measure_score(numpy.array(label_true), numpy.array(self.label_clustered))))
+		print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(numpy.array(label_true), numpy.array(self.label_clustered))))
+		# print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(dataset), np.array(label_true), metric="euclidean")))
+		# print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(numpy.array(self.dataset), numpy.array(label_true))))
 
+	def test_validation(self, datatest, label_true):
+		label_clustered_test = []
+		datatest = utils.normalize_attr(datatest)
+		for instance in datatest:
+			label_clustered_test.append(self.predict(instance))
 
-
+		print("---------------- K-MEANS SCORE USING DATA TEST ------------------------")
+		print("ARI SCORE: " + str(adjusted_rand_score(numpy.array(label_true), numpy.array(label_clustered_test))))
+		print("MUTUAL INFO SCORE: " + str(adjusted_mutual_info_score(numpy.array(label_true), numpy.array(label_clustered_test))))
+		print("HOMOGENEITY SCORE: " + str(homogeneity_score(numpy.array(label_true), numpy.array(label_clustered_test))))
+		print("COMPLETENESS SCORE: " + str(completeness_score(numpy.array(label_true), numpy.array(label_clustered_test))))
+		print("V MEASURE SCORE: " + str(v_measure_score(numpy.array(label_true), numpy.array(label_clustered_test))))
+		print("FOWLKES-MALLOWS SCORE: " + str(fowlkes_mallows_score(numpy.array(label_true), numpy.array(label_clustered_test))))
+		# print("SILHOUETTE SCORE: " + str(silhouette_score(numpy.array(datatest), np.array(label_true), metric="euclidean")))
+		print("CALINSKI-HARABAZ SCORE: " + str(calinski_harabaz_score(numpy.array(datatest), numpy.array(label_true))))
 
 
